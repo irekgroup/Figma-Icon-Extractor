@@ -113,7 +113,7 @@ getTodos() */
 
 // для работы с переменными окружения
 
-/* const logger = require('./logger.js')
+const logger = require('./logger.js')
 require('dotenv').config({path: '.env.local'} );
 
 const { createProgressBar, updateProgressBar, stopProgressBar } = require('./progressBar.js');
@@ -128,10 +128,6 @@ const Types = {
   Positive: "positive",
   Negative: "negative",
 };
-
-
-
-
 
 const DIRECTORIES_BY_TYPES = {
   [Types.Positive]: 'positive/',
@@ -148,75 +144,85 @@ const path = require('path');
 const fs = require('fs/promises');
 
 //Получаем страницы фигмы
-
+// **1. Функция для загрузки иконок из Figma:**
 const uploadIcons = async () => {
-
+  // **1.1. HTTP-клиент для работы с API Figma:**
   const agent = superagent.agent();
+  // **1.2. Получение документа Figma:**
   let figmaDocument;
   try {
     figmaDocument = (
       await agent
         .get(`${FIGMA_API_HOST}/files/${FIGMA_KEY}`)
         .set('X-FIGMA-TOKEN', FIGMA_TOKEN)
-    ).body.document.children;
+    ).body.document.children; // Дочерние элементы страницы
   } catch (error) {
     console.error(error);
     process.exit(1);
   }
 
+  // **1.3. Получение списка названий папок:**
   const folderNames = [];
-
+  // **1.4. Поиск страницы по имени и извлечение иконок:**
   const icons = figmaDocument.find(({name}) => name === PAGE_NAME)
   .children
 	.reduce((acc, item) => {
-		const { name: folderName, children } = item;
-		folderNames.push(folderName);
+		const { name: folderName, children } = item; // Извлечь название папки и дочерние элементы
+		folderNames.push(folderName);// Добавить название папки в список
 
-		return [...acc, ...children.map(({id, name}) => ({id, name, folderName}))];
+		return [
+      ...acc, // Добавить к результату накопленные элементы
+      ...children.map(({id, name}) =>
+      ({id, name, folderName}))]; // Преобразовать дочерние элементы
 	}, []);
 
-  //Получаем url исконки
+  console.log(folderName);
 
-  let iconsData;
+  //Получаем url исконки
+  // **1.5. Получение ссылок на SVG-изображения иконок:**
+  let iconsData = [];
 
   try {
+    // **1. Получение ссылок на SVG-изображения иконок:**
     const iconUrls = (
       await agent
         .get(`${FIGMA_API_HOST}/images/${FIGMA_KEY}`)
         .query({
+          // **1.1. Список ID иконок:**
           ids: icons.map(({ id }) => id).join(','),
-          format: 'svg',
+          format: 'svg', // Формат - SVG
         })
         .set('X-FIGMA-TOKEN', FIGMA_TOKEN)
     ).body.images;
-
+    // **2. Формирование данных об иконках:**
     iconsData = icons.map(icon => ({
+      // **2.1. Копирование данных иконки:**
       ...icon,
+      // **2.2. Добавление ссылки на SVG:**
       url: iconUrls[icon.id],
     }));
   } catch (error) {
+    // **3. Обработка ошибки:**
     console.error(error);
     process.exit(1);
   }
-
+  // **1.6. Путь к папке для сохранения иконок:**
   const folderPath = path.join(process.cwd(), BASE_DIR);
+  const icon = iconsData[0];
+  const extension = '.svg';
+  const iconSvg = (await agent.get(icon.url)).body;
+  const iconName = `${icon.name.replaceAll(/ |\//g, '')}${extension}`;
 
-        const icon = iconsData[0];
-        const extension = '.svg';
-        const iconSvg = (await agent.get(icon.url)).body;
-        const iconName = `${icon.name.replaceAll(/ |\//g, '')}${extension}`;
-
-
- //создаем папку
-        await fs.mkdir(folderPath);
-
-        await fs.writeFile(
-        path.join(folderPath, iconName),
-        iconSvg
-        );
+ // **1.8. Создание папки для иконок:**
+  await fs.mkdir(folderPath);
+  // **1.9. Сохранение SVG-кода первой иконки:**
+  await fs.writeFile(
+  path.join(folderPath, iconName),
+  iconSvg
+  ); // Сохранить SVG-код первой иконки
 
 
 }
 
-uploadIcons() */
+uploadIcons()
 
