@@ -1,0 +1,15 @@
+{
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "dotenv": "^16.4.5",
+    "minimist": "^1.2.8",
+    "node-fetch": "^3.3.2",
+    "p-limit": "^5.0.0",
+    "progress": "^2.0.3",
+    "superagent": "^8.1.2"
+  },
+  "scripts": {
+    "start": "node generate-icons --NODE_ENV='development' --port='3000'",
+    "prod": "node script --NODE_ENV='production' --port='3001'"
+  }
+}
