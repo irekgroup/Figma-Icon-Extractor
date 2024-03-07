@@ -1,7 +1,17 @@
 const chalk = require('chalk')
+// **4.4. Логирование:**
 const logger = {
-    info: (text) => console.log(`${chalk.black.bgWhite(' INFO: '.padEnd(10))} ${text}`),
-    success: (text) => console.log(`${chalk.black.bgGreen(' SUCCESS: '.padEnd(10))} ${text}`),
-    error: (text) => console.log(`${chalk.black.bgRed(' ERROR: '.padEnd(10))} ${text}`)
-}
+    info: (text) =>
+      console.log(
+        `${chalk.black.bgWhite(' INFO: '.padEnd(10))} ${text}`,
+      ),
+    success: (text) =>
+      console.log(
+        `${chalk.black.bgGreen(' SUCCESS: '.padEnd(10))} ${text}`,
+      ),
+    error: (text) =>
+      console.log(
+        `${chalk.black.bgRed(' ERROR: '.padEnd(10))} ${text}`,
+      ),
+  };
 module.exports = logger;
