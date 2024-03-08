@@ -18,11 +18,11 @@
 1. Установите Node.js и npm.
 2. Скачайте репозиторий:
     ```bash
-    git clone https://github.com/your-username/generate_icons.git
+    git clone https://github.com/your-username/Figma-Icon-Extractor.git
     ```
 3. Перейдите в папку с репозиторием:
     ```bash
-    cd generate_icons
+    cd Figma-Icon-Extractor
     ```
 4. Установите зависимости:
     ```bash
